@@ -16,6 +16,7 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IPieDataSet;
 import com.github.mikephil.charting.renderer.PieChartRenderer;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.Utils;
 
 import java.util.List;
@@ -54,6 +55,11 @@ public class PieChart extends PieRadarChartBase<PieData> {
     private boolean mDrawHole = true;
 
     /**
+     * if true, the hole will see-through to the inner ends of the slices
+     */
+    private boolean mDrawHoleTransparent = true;
+
+    /**
      * if true, the values inside the piechart are drawn as percent values
      */
     private boolean mUsePercentValues = false;
@@ -84,7 +90,7 @@ public class PieChart extends PieRadarChartBase<PieData> {
      */
     private boolean mDrawCenterText = true;
 
-    private float mCenterTextRadiusPercent = 1.f;
+    private float mCenterTextRadiusPercent = 100.f;
 
     protected float mMaxAngle = 360f;
 
@@ -326,45 +332,16 @@ public class PieChart extends PieRadarChartBase<PieData> {
 
     /**
      * Sets the color for the hole that is drawn in the center of the PieChart
-     * (if enabled). NOTE: Use setHoleColorTransparent(boolean enabled) to make
-     * the hole transparent.
+     * (if enabled). Use transparent colors to make things beneath the hole visible.
      *
      * @param color
      */
     public void setHoleColor(int color) {
-        ((PieChartRenderer) mRenderer).getPaintHole().setXfermode(null);
         ((PieChartRenderer) mRenderer).getPaintHole().setColor(color);
     }
 
     /**
-     * Set the hole in the center of the PieChart transparent. Thank you, code
-     * provided by:
-     *
-     * @param enable
-     * @link https://github.com/tbarthel-fr
-     */
-    public void setHoleColorTransparent(boolean enable) {
-        if (enable) {
-            ((PieChartRenderer) mRenderer).getPaintHole().setColor(0xFFFFFFFF);
-            ((PieChartRenderer) mRenderer).getPaintHole().setXfermode(
-                    new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-        } else {
-            ((PieChartRenderer) mRenderer).getPaintHole().setXfermode(null);
-        }
-    }
-
-    /**
-     * Returns true if the hole in the center of the PieChart is transparent,
-     * false if not.
-     *
-     * @return true if hole is transparent.
-     */
-    public boolean isHoleTransparent() {
-        return ((PieChartRenderer) mRenderer).getPaintHole().getXfermode() != null;
-    }
-
-    /**
-     * set this to true to draw the pie center empty
+     * Set this to true to draw a hole in the pie center (the pie center is empty).
      *
      * @param enabled
      */

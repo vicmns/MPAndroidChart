@@ -97,12 +97,14 @@ public class HorizontalBarChartActivity extends DemoBase implements OnSeekBarCha
         yl.setDrawAxisLine(true);
         yl.setDrawGridLines(true);
         yl.setGridLineWidth(0.3f);
+        yl.setAxisMinValue(0f); // this replaces setStartAtZero(true)
 //        yl.setInverted(true);
 
         YAxis yr = mChart.getAxisRight();
         yr.setTypeface(tf);
         yr.setDrawAxisLine(true);
         yr.setDrawGridLines(false);
+        yr.setAxisMinValue(0f); // this replaces setStartAtZero(true)
 //        yr.setInverted(true);
 
         setData(12, 50);
@@ -175,12 +177,6 @@ public class HorizontalBarChartActivity extends DemoBase implements OnSeekBarCha
                 mChart.invalidate();
                 break;
             }
-            case R.id.actionToggleStartzero: {
-                mChart.getAxisLeft().setStartAtZero(!mChart.getAxisLeft().isStartAtZeroEnabled());
-                mChart.getAxisRight().setStartAtZero(!mChart.getAxisRight().isStartAtZeroEnabled());
-                mChart.invalidate();
-                break;
-            }
             case R.id.animateX: {
                 mChart.animateX(3000);
                 break;
@@ -192,18 +188,6 @@ public class HorizontalBarChartActivity extends DemoBase implements OnSeekBarCha
             case R.id.animateXY: {
 
                 mChart.animateXY(3000, 3000);
-                break;
-            }
-            case R.id.actionToggleFilter: {
-
-                Approximator a = new Approximator(ApproximatorType.DOUGLAS_PEUCKER, 25);
-
-                if (!mChart.isFilteringEnabled()) {
-                    mChart.enableFiltering(a);
-                } else {
-                    mChart.disableFiltering();
-                }
-                mChart.invalidate();
                 break;
             }
             case R.id.actionSave: {

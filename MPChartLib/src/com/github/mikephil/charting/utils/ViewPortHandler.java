@@ -210,22 +210,73 @@ public class ViewPortHandler {
     }
 
     /**
-     * Zooms in or out by the given scale factor. x and y are the coordinates
-     * (in pixels) of the zoom center.
+     * Post-scales by the specified scale factors.
      *
-     * @param scaleX if < 1f --> zoom out, if > 1f --> zoom in
-     * @param scaleY if < 1f --> zoom out, if > 1f --> zoom in
+     * @param scaleX
+     * @param scaleY
+     * @return
+     */
+    public Matrix zoom(float scaleX, float scaleY) {
+
+        Matrix save = new Matrix();
+        save.set(mMatrixTouch);
+
+        save.postScale(scaleX, scaleY);
+
+        return save;
+    }
+
+    /**
+     * Post-scales by the specified scale factors. x and y is pivot.
+     *
+     * @param scaleX
+     * @param scaleY
      * @param x
      * @param y
+     * @return
      */
     public Matrix zoom(float scaleX, float scaleY, float x, float y) {
 
         Matrix save = new Matrix();
         save.set(mMatrixTouch);
 
-        // Log.i(LOG_TAG, "Zooming, x: " + x + ", y: " + y);
-
         save.postScale(scaleX, scaleY, x, y);
+
+        return save;
+    }
+
+    /**
+     * Sets the scale factor to the specified values.
+     *
+     * @param scaleX
+     * @param scaleY
+     * @return
+     */
+    public Matrix setZoom(float scaleX, float scaleY) {
+
+        Matrix save = new Matrix();
+        save.set(mMatrixTouch);
+
+        save.setScale(scaleX, scaleY);
+
+        return save;
+    }
+
+    /**
+     * Sets the scale factor to the specified values. x and y is pivot.
+     *
+     * @param scaleX
+     * @param scaleY
+     * @param x
+     * @param y
+     * @return
+     */
+    public Matrix setZoom(float scaleX, float scaleY, float x, float y) {
+
+        Matrix save = new Matrix();
+        save.set(mMatrixTouch);
+
+        save.setScale(scaleX, scaleY, x, y);
 
         return save;
     }
@@ -258,6 +309,25 @@ public class ViewPortHandler {
     }
 
     /**
+     * Post-translates to the specified points.
+     *
+     * @param transformedPts
+     * @return
+     */
+    public Matrix translate(final float[] transformedPts) {
+
+        Matrix save = new Matrix();
+        save.set(mMatrixTouch);
+
+        final float x = transformedPts[0] - offsetLeft();
+        final float y = transformedPts[1] - offsetTop();
+
+        save.postTranslate(-x, -y);
+
+        return save;
+    }
+
+    /**
      * Centers the viewport around the specified position (x-index and y-value)
      * in the chart. Centering the viewport outside the bounds of the chart is
      * not possible. Makes most sense in combination with the
@@ -267,15 +337,13 @@ public class ViewPortHandler {
      * @param view
      * @return save
      */
-    public synchronized void centerViewPort(final float[] transformedPts, final View view) {
+    public void centerViewPort(final float[] transformedPts, final View view) {
 
         Matrix save = new Matrix();
         save.set(mMatrixTouch);
 
         final float x = transformedPts[0] - offsetLeft();
         final float y = transformedPts[1] - offsetTop();
-
-        //Log.i("", "Moving view to x: " + x + ", y: " + y);
 
         save.postTranslate(-x, -y);
 

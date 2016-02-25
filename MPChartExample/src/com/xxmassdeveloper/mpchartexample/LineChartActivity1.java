@@ -27,8 +27,6 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.data.filter.Approximator;
-import com.github.mikephil.charting.data.filter.Approximator.ApproximatorType;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.ChartTouchListener;
@@ -130,9 +128,9 @@ public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListe
         leftAxis.addLimitLine(ll2);
         leftAxis.setAxisMaxValue(220f);
         leftAxis.setAxisMinValue(-50f);
-        leftAxis.setStartAtZero(false);
         //leftAxis.setYOffset(20f);
         leftAxis.enableGridDashedLine(10f, 10f, 0f);
+        leftAxis.setDrawZeroLine(false);
 
         // limit lines are drawn behind data (and not on top)
         leftAxis.setDrawLimitLinesBehindData(true);
@@ -244,12 +242,6 @@ public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListe
                 mChart.invalidate();
                 break;
             }
-            case R.id.actionToggleStartzero: {
-                mChart.getAxisLeft().setStartAtZero(!mChart.getAxisLeft().isStartAtZeroEnabled());
-                mChart.getAxisRight().setStartAtZero(!mChart.getAxisRight().isStartAtZeroEnabled());
-                mChart.invalidate();
-                break;
-            }
             case R.id.actionTogglePinch: {
                 if (mChart.isPinchZoomEnabled())
                     mChart.setPinchZoom(false);
@@ -274,19 +266,6 @@ public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListe
             }
             case R.id.animateXY: {
                 mChart.animateXY(3000, 3000);
-                break;
-            }
-            case R.id.actionToggleFilter: {
-
-                // the angle of filtering is 35°
-                Approximator a = new Approximator(ApproximatorType.DOUGLAS_PEUCKER, 35);
-
-                if (!mChart.isFilteringEnabled()) {
-                    mChart.enableFiltering(a);
-                } else {
-                    mChart.disableFiltering();
-                }
-                mChart.invalidate();
                 break;
             }
             case R.id.actionSave: {
@@ -376,7 +355,7 @@ public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListe
 
     @Override
     public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-        Log.i("Gesture", "START");
+        Log.i("Gesture", "START, x: " + me.getX() + ", y: " + me.getY());
     }
 
     @Override
@@ -421,7 +400,8 @@ public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListe
     @Override
     public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
         Log.i("Entry selected", e.toString());
-        Log.i("", "low: " + mChart.getLowestVisibleXIndex() + ", high: " + mChart.getHighestVisibleXIndex());
+        Log.i("LOWHIGH", "low: " + mChart.getLowestVisibleXIndex() + ", high: " + mChart.getHighestVisibleXIndex());
+        Log.i("MIN MAX", "xmin: " + mChart.getXChartMin() + ", xmax: " + mChart.getXChartMax() + ", ymin: " + mChart.getYChartMin() + ", ymax: " + mChart.getYChartMax());
     }
 
     @Override

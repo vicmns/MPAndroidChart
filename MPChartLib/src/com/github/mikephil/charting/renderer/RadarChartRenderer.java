@@ -55,14 +55,30 @@ public class RadarChartRenderer extends LineRadarRenderer {
 
         RadarData radarData = mChart.getData();
 
+        int mostEntries = 0;
+
+        for (IRadarDataSet set : radarData.getDataSets()) {
+            if (set.getEntryCount() > mostEntries) {
+                mostEntries = set.getEntryCount();
+            }
+        }
+
         for (IRadarDataSet set : radarData.getDataSets()) {
 
-            if (set.isVisible() && set.getEntryCount() > 0)
-                drawDataSet(c, set);
+            if (set.isVisible() && set.getEntryCount() > 0) {
+                drawDataSet(c, set, mostEntries);
+            }
         }
     }
 
-    protected void drawDataSet(Canvas c, IRadarDataSet dataSet) {
+    /**
+     * Draws the RadarDataSet
+     *
+     * @param c
+     * @param dataSet
+     * @param mostEntries the entry count of the dataset with the most entries
+     */
+    protected void drawDataSet(Canvas c, IRadarDataSet dataSet, int mostEntries) {
 
         float phaseX = mAnimator.getPhaseX();
         float phaseY = mAnimator.getPhaseY();
@@ -100,15 +116,26 @@ public class RadarChartRenderer extends LineRadarRenderer {
                 surface.lineTo(p.x, p.y);
         }
 
-        surface.close();
-
-        final Drawable drawable = dataSet.getFillDrawable();
-        if (drawable != null) {
-
-            drawFilledPath(c, surface, drawable);
+        // if this is the largest set, close it
+        if (dataSet.getEntryCount() >= mostEntries) {
+            surface.close();
         } else {
 
-            drawFilledPath(c, surface, dataSet.getFillColor(), dataSet.getFillAlpha());
+            // if this is not the largest set, draw a line to the center and then close it
+            surface.lineTo(center.x, center.y);
+            surface.close();
+        }
+
+        if(dataSet.isDrawFilledEnabled()) {
+
+            final Drawable drawable = dataSet.getFillDrawable();
+            if (drawable != null) {
+
+                drawFilledPath(c, surface, drawable);
+            } else {
+
+                drawFilledPath(c, surface, dataSet.getFillColor(), dataSet.getFillAlpha());
+            }
         }
 
         mRenderPaint.setStrokeWidth(dataSet.getLineWidth());
@@ -162,7 +189,7 @@ public class RadarChartRenderer extends LineRadarRenderer {
                         (entry.getVal() - mChart.getYChartMin()) * factor * phaseY,
                         sliceangle * j * phaseX + mChart.getRotationAngle());
 
-                drawValue(c, dataSet.getValueFormatter(), entry.getVal(), entry, i, p.x, p.y - yoffset);
+                drawValue(c, dataSet.getValueFormatter(), entry.getVal(), entry, i, p.x, p.y - yoffset, dataSet.getValueTextColor(j));
             }
         }
     }

@@ -83,7 +83,6 @@ public class CubicLineChartActivity extends DemoBase implements OnSeekBarChangeL
         YAxis y = mChart.getAxisLeft();
         y.setTypeface(tf);
         y.setLabelCount(6, false);
-        y.setStartAtZero(false);
         y.setTextColor(Color.WHITE);
         y.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART);
         y.setDrawGridLines(false);
@@ -173,12 +172,6 @@ public class CubicLineChartActivity extends DemoBase implements OnSeekBarChangeL
                 mChart.invalidate();
                 break;
             }
-            case R.id.actionToggleStartzero: {
-                mChart.getAxisLeft().setStartAtZero(!mChart.getAxisLeft().isStartAtZeroEnabled());
-                mChart.getAxisRight().setStartAtZero(!mChart.getAxisRight().isStartAtZeroEnabled());
-                mChart.invalidate();
-                break;
-            }
             case R.id.actionTogglePinch: {
                 if (mChart.isPinchZoomEnabled())
                     mChart.setPinchZoom(false);
@@ -203,19 +196,6 @@ public class CubicLineChartActivity extends DemoBase implements OnSeekBarChangeL
             }
             case R.id.animateXY: {
                 mChart.animateXY(3000, 3000);
-                break;
-            }
-            case R.id.actionToggleFilter: {
-
-                // the angle of filtering is 35°
-                Approximator a = new Approximator(ApproximatorType.DOUGLAS_PEUCKER, 35);
-
-                if (!mChart.isFilteringEnabled()) {
-                    mChart.enableFiltering(a);
-                } else {
-                    mChart.disableFiltering();
-                }
-                mChart.invalidate();            
                 break;
             }
             case R.id.actionSave: {
