@@ -40,7 +40,7 @@ public class XAxisRenderer extends AxisRenderer {
 
         StringBuilder widthText = new StringBuilder();
 
-        int xValChars = Math.round(xValMaximumLength);
+        int xValChars = mXAxis.getValueFormatter().getXValueSize(Math.round(xValMaximumLength));
 
         for (int i = 0; i < xValChars; i++) {
             widthText.append('h');

@@ -21,4 +21,6 @@ public interface XAxisValueFormatter {
      * @return
      */
     String getXValue(String original, int index, ViewPortHandler viewPortHandler);
+
+    int getXValueSize(int originalSize);
 }

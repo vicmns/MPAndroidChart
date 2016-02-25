@@ -13,4 +13,9 @@ public class DefaultXAxisValueFormatter implements XAxisValueFormatter {
     public String getXValue(String original, int index, ViewPortHandler viewPortHandler) {
         return original; // just return original, no adjustments
     }
+
+    @Override
+    public int getXValueSize(int originalSize) {
+        return originalSize;
+    }
 }
