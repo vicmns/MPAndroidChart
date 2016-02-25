@@ -2,6 +2,7 @@
 package com.github.mikephil.charting.charts;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -734,12 +735,19 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
      * @param axis
      * @param duration
      */
+    @TargetApi(11)
     public void zoomAndCenterAnimated(float scaleX, float scaleY, float xValue, float yValue, AxisDependency axis, long duration) {
 
-        PointD origin = getValuesByTouchPoint(mViewPortHandler.contentLeft(), mViewPortHandler.contentTop(), axis);
+        if (android.os.Build.VERSION.SDK_INT >= 11) {
 
-        Runnable job = new AnimatedZoomJob(mViewPortHandler, this, getTransformer(axis), getAxis(axis), mXAxis.getValues().size(), scaleX, scaleY, mViewPortHandler.getScaleX(), mViewPortHandler.getScaleY(), xValue, yValue, (float) origin.x, (float) origin.y, duration);
-        postJob(job);
+            PointD origin = getValuesByTouchPoint(mViewPortHandler.contentLeft(), mViewPortHandler.contentTop(), axis);
+
+            Runnable job = new AnimatedZoomJob(mViewPortHandler, this, getTransformer(axis), getAxis(axis), mXAxis.getValues().size(), scaleX, scaleY, mViewPortHandler.getScaleX(), mViewPortHandler.getScaleY(), xValue, yValue, (float) origin.x, (float) origin.y, duration);
+            postJob(job);
+
+        } else {
+            Log.e(LOG_TAG, "Unable to execute zoomAndCenterAnimated(...) on API level < 11");
+        }
     }
 
     /**
@@ -880,16 +888,22 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
      * @param axis
      * @param duration the duration of the animation in milliseconds
      */
+    @TargetApi(11)
     public void moveViewToAnimated(float xIndex, float yValue, AxisDependency axis, long duration) {
 
-        PointD bounds = getValuesByTouchPoint(mViewPortHandler.contentLeft(), mViewPortHandler.contentTop(), axis);
+        if (android.os.Build.VERSION.SDK_INT >= 11) {
 
-        float valsInView = getDeltaY(axis) / mViewPortHandler.getScaleY();
+            PointD bounds = getValuesByTouchPoint(mViewPortHandler.contentLeft(), mViewPortHandler.contentTop(), axis);
 
-        Runnable job = new AnimatedMoveViewJob(mViewPortHandler, xIndex, yValue + valsInView / 2f,
-                getTransformer(axis), this, (float) bounds.x, (float) bounds.y, duration);
+            float valsInView = getDeltaY(axis) / mViewPortHandler.getScaleY();
 
-        postJob(job);
+            Runnable job = new AnimatedMoveViewJob(mViewPortHandler, xIndex, yValue + valsInView / 2f,
+                    getTransformer(axis), this, (float) bounds.x, (float) bounds.y, duration);
+
+            postJob(job);
+        } else {
+            Log.e(LOG_TAG, "Unable to execute moveViewToAnimated(...) on API level < 11");
+        }
     }
 
     /**
@@ -922,18 +936,24 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
      * @param axis
      * @param duration the duration of the animation in milliseconds
      */
+    @TargetApi(11)
     public void centerViewToAnimated(float xIndex, float yValue, AxisDependency axis, long duration) {
 
-        PointD bounds = getValuesByTouchPoint(mViewPortHandler.contentLeft(), mViewPortHandler.contentTop(), axis);
+        if (android.os.Build.VERSION.SDK_INT >= 11) {
 
-        float valsInView = getDeltaY(axis) / mViewPortHandler.getScaleY();
-        float xsInView = getXAxis().getValues().size() / mViewPortHandler.getScaleX();
+            PointD bounds = getValuesByTouchPoint(mViewPortHandler.contentLeft(), mViewPortHandler.contentTop(), axis);
 
-        Runnable job = new AnimatedMoveViewJob(mViewPortHandler,
-                xIndex - xsInView / 2f, yValue + valsInView / 2f,
-                getTransformer(axis), this, (float) bounds.x, (float) bounds.y, duration);
+            float valsInView = getDeltaY(axis) / mViewPortHandler.getScaleY();
+            float xsInView = getXAxis().getValues().size() / mViewPortHandler.getScaleX();
 
-        postJob(job);
+            Runnable job = new AnimatedMoveViewJob(mViewPortHandler,
+                    xIndex - xsInView / 2f, yValue + valsInView / 2f,
+                    getTransformer(axis), this, (float) bounds.x, (float) bounds.y, duration);
+
+            postJob(job);
+        } else {
+            Log.e(LOG_TAG, "Unable to execute centerViewToAnimated(...) on API level < 11");
+        }
     }
 
     /**
