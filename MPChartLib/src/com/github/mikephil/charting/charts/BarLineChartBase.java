@@ -559,7 +559,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
                 yPos = y;
 
                 BarEntry entry = (BarEntry) e;
-                if (entry.getVals() != null) {
+                if (entry.getVals() != null && highlight.getRange() != null) {
                     xPos = highlight.getRange().to;
                 } else {
                     xPos = e.getVal();
