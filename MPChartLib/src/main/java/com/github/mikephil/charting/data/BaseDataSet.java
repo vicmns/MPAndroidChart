@@ -2,11 +2,13 @@ package com.github.mikephil.charting.data;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Typeface;
 
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.formatter.DefaultValueFormatter;
-import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.Utils;
@@ -49,12 +51,17 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
     /**
      * custom formatter that is used instead of the auto-formatter if set
      */
-    protected transient ValueFormatter mValueFormatter;
+    protected transient IValueFormatter mValueFormatter;
 
     /**
      * the typeface used for the value text
      */
     protected Typeface mValueTypeface;
+
+    private Legend.LegendForm mForm = Legend.LegendForm.DEFAULT;
+    private float mFormSize = Float.NaN;
+    private float mFormLineWidth = Float.NaN;
+    private DashPathEffect mFormLineDashEffect = null;
 
     /**
      * if true, y-values are drawn on the chart
@@ -257,7 +264,7 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
     }
 
     @Override
-    public void setValueFormatter(ValueFormatter f) {
+    public void setValueFormatter(IValueFormatter f) {
 
         if (f == null)
             return;
@@ -266,9 +273,9 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
     }
 
     @Override
-    public ValueFormatter getValueFormatter() {
+    public IValueFormatter getValueFormatter() {
         if (needsFormatter())
-            return new DefaultValueFormatter(1);
+            return Utils.getDefaultValueFormatter();
         return mValueFormatter;
     }
 
@@ -316,6 +323,42 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
     @Override
     public float getValueTextSize() {
         return mValueTextSize;
+    }
+
+    public void setForm(Legend.LegendForm form) {
+        mForm = form;
+    }
+
+    @Override
+    public Legend.LegendForm getForm() {
+        return mForm;
+    }
+
+    public void setFormSize(float formSize) {
+        mFormSize = formSize;
+    }
+
+    @Override
+    public float getFormSize() {
+        return mFormSize;
+    }
+
+    public void setFormLineWidth(float formLineWidth) {
+        mFormLineWidth = formLineWidth;
+    }
+
+    @Override
+    public float getFormLineWidth() {
+        return mFormLineWidth;
+    }
+
+    public void setFormLineDashEffect(DashPathEffect dashPathEffect) {
+        mFormLineDashEffect = dashPathEffect;
+    }
+
+    @Override
+    public DashPathEffect getFormLineDashEffect() {
+        return mFormLineDashEffect;
     }
 
     @Override
@@ -387,9 +430,9 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
     }
 
     @Override
-    public boolean removeEntryByXPos(float xPos) {
+    public boolean removeEntryByXValue(float xValue) {
 
-        T e = getEntryForXPos(xPos);
+        T e = getEntryForXValue(xValue, Float.NaN);
         return removeEntry(e);
     }
 

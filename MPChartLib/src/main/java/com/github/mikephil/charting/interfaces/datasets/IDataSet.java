@@ -1,11 +1,13 @@
 package com.github.mikephil.charting.interfaces.datasets;
 
+import android.graphics.DashPathEffect;
 import android.graphics.Typeface;
 
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.formatter.IValueFormatter;
 
 import java.util.List;
 
@@ -58,40 +60,57 @@ public interface IDataSet<T extends Entry> {
     void calcMinMax();
 
     /**
-     * Returns the first Entry object found at the given xPos with binary
-     * search. If the no Entry at the specified xPos is found, this method
-     * returns the Entry at the xPos according to the rounding.
-     * INFORMATION: This method does calculations at runtime. Do
-     * not over-use in performance critical situations.
+     * Calculates the min and max y-values from the Entry closest to the given fromX to the Entry closest to the given toX value.
+     * This is only needed for the autoScaleMinMax feature.
      *
-     * @param xPos
-     * @param rounding determine to round up/down/closest if there is no Entry matching the provided x-index
-     * @return
+     * @param fromX
+     * @param toX
      */
-    T getEntryForXPos(float xPos, DataSet.Rounding rounding);
+    void calcMinMaxY(float fromX, float toX);
 
     /**
-     * Returns the first Entry object found at the given xPos with binary
-     * search. If the no Entry at the specified xPos is found, this method
-     * returns the index at the closest xPos.
+     * Returns the first Entry object found at the given x-value with binary
+     * search.
+     * If the no Entry at the specified x-value is found, this method
+     * returns the Entry at the closest x-value according to the rounding.
      * INFORMATION: This method does calculations at runtime. Do
      * not over-use in performance critical situations.
      *
-     * @param xPos
+     * @param xValue the x-value
+     * @param closestToY If there are multiple y-values for the specified x-value,
+     * @param rounding determine whether to round up/down/closest
+     *                 if there is no Entry matching the provided x-value
      * @return
+     *
+     *
      */
-    T getEntryForXPos(float xPos);
+    T getEntryForXValue(float xValue, float closestToY, DataSet.Rounding rounding);
 
     /**
-     * Returns all Entry objects found at the given xPos with binary
-     * search. An empty array if no Entry object at that xPos.
+     * Returns the first Entry object found at the given x-value with binary
+     * search.
+     * If the no Entry at the specified x-value is found, this method
+     * returns the Entry at the closest x-value.
      * INFORMATION: This method does calculations at runtime. Do
      * not over-use in performance critical situations.
      *
-     * @param xPos
+     *
+     * @param xValue the x-value
+     * @param closestToY If there are multiple y-values for the specified x-value,
      * @return
      */
-    List<T> getEntriesForXPos(float xPos);
+    T getEntryForXValue(float xValue, float closestToY);
+
+    /**
+     * Returns all Entry objects found at the given x-value with binary
+     * search. An empty array if no Entry object at that x-value.
+     * INFORMATION: This method does calculations at runtime. Do
+     * not over-use in performance critical situations.
+     *
+     * @param xValue
+     * @return
+     */
+    List<T> getEntriesForXValue(float xValue);
 
     /**
      * Returns the Entry object found at the given index (NOT xIndex) in the values array.
@@ -102,17 +121,20 @@ public interface IDataSet<T extends Entry> {
     T getEntryForIndex(int index);
 
     /**
-     * Returns the first Entry index found at the given xPos with binary
-     * search. If the no Entry at the specified xPos is found, this method
-     * returns the Entry at the closest xPos.
+     * Returns the first Entry index found at the given x-value with binary
+     * search.
+     * If the no Entry at the specified x-value is found, this method
+     * returns the Entry at the closest x-value according to the rounding.
      * INFORMATION: This method does calculations at runtime. Do
      * not over-use in performance critical situations.
      *
-     * @param xPos
-     * @param rounding determine to round up/down/closest if there is no Entry matching the provided x-index
+     * @param xValue the x-value
+     * @param closestToY If there are multiple y-values for the specified x-value,
+     * @param rounding determine whether to round up/down/closest
+     *                 if there is no Entry matching the provided x-value
      * @return
      */
-    int getEntryIndex(float xPos, DataSet.Rounding rounding);
+    int getEntryIndex(float xValue, float closestToY, DataSet.Rounding rounding);
 
     /**
      * Returns the position of the provided entry in the DataSets Entry array.
@@ -183,12 +205,12 @@ public interface IDataSet<T extends Entry> {
     boolean removeEntry(T e);
 
     /**
-     * Removes the Entry object closest to the given xPos from the DataSet.
+     * Removes the Entry object closest to the given x-value from the DataSet.
      * Returns true if an Entry was removed, false if no Entry could be removed.
      *
-     * @param xPos
+     * @param xValue
      */
-    boolean removeEntryByXPos(float xPos);
+    boolean removeEntryByXValue(float xValue);
 
     /**
      * Removes the Entry object at the given index in the values array from the DataSet.
@@ -294,14 +316,14 @@ public interface IDataSet<T extends Entry> {
      *
      * @param f
      */
-    void setValueFormatter(ValueFormatter f);
+    void setValueFormatter(IValueFormatter f);
 
     /**
      * Returns the formatter used for drawing the values inside the chart.
      *
      * @return
      */
-    ValueFormatter getValueFormatter();
+    IValueFormatter getValueFormatter();
 
     /**
      * Returns true if the valueFormatter object of this DataSet is null.
@@ -367,6 +389,34 @@ public interface IDataSet<T extends Entry> {
      * @return
      */
     float getValueTextSize();
+
+    /**
+     * The form to draw for this dataset in the legend.
+     * <p/>
+     * Return `DEFAULT` to use the default legend form.
+     */
+    Legend.LegendForm getForm();
+
+    /**
+     * The form size to draw for this dataset in the legend.
+     * <p/>
+     * Return `Float.NaN` to use the default legend form size.
+     */
+    float getFormSize();
+
+    /**
+     * The line width for drawing the form of this dataset in the legend
+     * <p/>
+     * Return `Float.NaN` to use the default legend form line width.
+     */
+    float getFormLineWidth();
+
+    /**
+     * The line dash path effect used for shapes that consist of lines.
+     * <p/>
+     * Return `null` to use the default legend form line dash effect.
+     */
+    DashPathEffect getFormLineDashEffect();
 
     /**
      * set this to true to draw y-values on the chart NOTE (for bar and

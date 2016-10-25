@@ -1,15 +1,14 @@
 package com.xxmassdeveloper.mpchartexample.custom;
 
 import com.github.mikephil.charting.charts.BarLineChartBase;
-import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.formatter.AxisValueFormatter;
-import com.github.mikephil.charting.formatter.DefaultAxisValueFormatter;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 
 /**
  * Created by philipp on 02/06/16.
  */
-public class DayAxisValueFormatter implements AxisValueFormatter {
+public class DayAxisValueFormatter implements IAxisValueFormatter
+{
 
     protected String[] mMonths = new String[]{
             "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"
@@ -32,7 +31,7 @@ public class DayAxisValueFormatter implements AxisValueFormatter {
         String monthName = mMonths[month % mMonths.length];
         String yearName = String.valueOf(year);
 
-        if (chart.getVisibleXRange() > 30 * axis.getLabelCount()) {
+        if (chart.getVisibleXRange() > 30 * 6) {
 
             return monthName + " " + yearName;
         } else {
@@ -71,12 +70,17 @@ public class DayAxisValueFormatter implements AxisValueFormatter {
 
     private int getDaysForMonth(int month, int year) {
 
-        if (month == 1) {
+        // month is 0-based
 
-            if (year == 2016 || year == 2020)
-                return 29;
-            else
-                return 28;
+        if (month == 1) {
+            int x400 = month % 400;
+            if (x400 < 0)
+            {
+                x400 = -x400;
+            }
+            boolean is29 = (month % 4) == 0 && x400 != 100 && x400 != 200 && x400 != 300;
+
+            return is29 ? 29 : 28;
         }
 
         if (month == 3 || month == 5 || month == 8 || month == 10)
@@ -103,19 +107,19 @@ public class DayAxisValueFormatter implements AxisValueFormatter {
         return Math.max(month, 0);
     }
 
-    private int determineDayOfMonth(int dayOfYear, int month) {
+    private int determineDayOfMonth(int days, int month) {
 
         int count = 0;
-        int days = 0;
+        int daysForMonths = 0;
 
         while (count < month) {
 
-            int year = determineYear(days);
-            days += getDaysForMonth(count % 12, year);
+            int year = determineYear(daysForMonths);
+            daysForMonths += getDaysForMonth(count % 12, year);
             count++;
         }
 
-        return dayOfYear - days;
+        return days - daysForMonths;
     }
 
     private int determineYear(int days) {

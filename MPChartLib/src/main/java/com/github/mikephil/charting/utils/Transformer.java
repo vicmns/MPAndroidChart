@@ -169,9 +169,10 @@ public class Transformer {
      * @return
      */
     public float[] generateTransformedValuesLine(ILineDataSet data,
-                                                 float phaseX, float phaseY, int from, int to) {
+                                                 float phaseX, float phaseY,
+                                                 int min, int max) {
 
-        final int count = (int) ((to - from) * phaseX + 1) * 2;
+        final int count = ((int) ((max - min) * phaseX) + 1) * 2;
 
         if (valuePointsForGenerateTransformedValuesLine.length != count) {
             valuePointsForGenerateTransformedValuesLine = new float[count];
@@ -180,7 +181,7 @@ public class Transformer {
 
         for (int j = 0; j < count; j += 2) {
 
-            Entry e = data.getEntryForIndex(j / 2 + from);
+            Entry e = data.getEntryForIndex(j / 2 + min);
 
             if (e != null) {
                 valuePoints[j] = e.getX();
@@ -353,7 +354,7 @@ public class Transformer {
             m.mapRect(rects.get(i));
     }
 
-    protected Matrix mPixelsToValueMatrixBuffer = new Matrix();
+    protected Matrix mPixelToValueMatrixBuffer = new Matrix();
 
     /**
      * Transforms the given array of touch positions (pixels) (x, y, x, y, ...)
@@ -363,7 +364,7 @@ public class Transformer {
      */
     public void pixelsToValue(float[] pixels) {
 
-        Matrix tmp = mPixelsToValueMatrixBuffer;
+        Matrix tmp = mPixelToValueMatrixBuffer;
         tmp.reset();
 
         // invert all matrixes to convert back to the original value
@@ -387,7 +388,7 @@ public class Transformer {
      * returns the x and y values in the chart at the given touch point
      * (encapsulated in a MPPointD). This method transforms pixel coordinates to
      * coordinates / values in the chart. This is the opposite method to
-     * getPixelsForValues(...).
+     * getPixelForValues(...).
      *
      * @param x
      * @param y
@@ -419,7 +420,7 @@ public class Transformer {
      * @param y
      * @return
      */
-    public MPPointD getPixelsForValues(float x, float y) {
+    public MPPointD getPixelForValues(float x, float y) {
 
         ptsBuffer[0] = x;
         ptsBuffer[1] = y;

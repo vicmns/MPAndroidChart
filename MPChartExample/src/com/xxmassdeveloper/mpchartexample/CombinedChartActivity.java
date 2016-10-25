@@ -2,7 +2,6 @@
 package com.xxmassdeveloper.mpchartexample;
 
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,13 +29,12 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.ScatterData;
 import com.github.mikephil.charting.data.ScatterDataSet;
-import com.github.mikephil.charting.formatter.AxisValueFormatter;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class CombinedChartActivity extends DemoBase {
 
@@ -51,7 +49,7 @@ public class CombinedChartActivity extends DemoBase {
         setContentView(R.layout.activity_combined);
 
         mChart = (CombinedChart) findViewById(R.id.chart1);
-        mChart.setDescription("");
+        mChart.getDescription().setEnabled(false);
         mChart.setBackgroundColor(Color.WHITE);
         mChart.setDrawGridBackground(false);
         mChart.setDrawBarShadow(false);
@@ -64,21 +62,24 @@ public class CombinedChartActivity extends DemoBase {
 
         Legend l = mChart.getLegend();
         l.setWordWrapEnabled(true);
-        l.setPosition(Legend.LegendPosition.BELOW_CHART_CENTER);
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        l.setDrawInside(false);
 
         YAxis rightAxis = mChart.getAxisRight();
         rightAxis.setDrawGridLines(false);
-        rightAxis.setAxisMinValue(0f); // this replaces setStartAtZero(true)
+        rightAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
 
         YAxis leftAxis = mChart.getAxisLeft();
         leftAxis.setDrawGridLines(false);
-        leftAxis.setAxisMinValue(0f); // this replaces setStartAtZero(true)
+        leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
 
         XAxis xAxis = mChart.getXAxis();
         xAxis.setPosition(XAxisPosition.BOTH_SIDED);
-        xAxis.setAxisMinValue(0f);
+        xAxis.setAxisMinimum(0f);
         xAxis.setGranularity(1f);
-        xAxis.setValueFormatter(new AxisValueFormatter() {
+        xAxis.setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
                 return mMonths[(int) value % mMonths.length];
@@ -99,7 +100,7 @@ public class CombinedChartActivity extends DemoBase {
         data.setData(generateCandleData());
         data.setValueTypeface(mTfLight);
 
-        xAxis.setAxisMaxValue(data.getXMax() + 0.25f);
+        xAxis.setAxisMaximum(data.getXMax() + 0.25f);
 
         mChart.setData(data);
         mChart.invalidate();

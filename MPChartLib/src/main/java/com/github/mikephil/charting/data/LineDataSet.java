@@ -4,9 +4,10 @@ package com.github.mikephil.charting.data;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
+import android.util.Log;
 
 import com.github.mikephil.charting.formatter.DefaultFillFormatter;
-import com.github.mikephil.charting.formatter.FillFormatter;
+import com.github.mikephil.charting.formatter.IFillFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.Utils;
@@ -54,7 +55,7 @@ public class LineDataSet extends LineRadarDataSet<Entry> implements ILineDataSet
     /**
      * formatter for customizing the position of the fill-line
      */
-    private FillFormatter mFillFormatter = new DefaultFillFormatter();
+    private IFillFormatter mFillFormatter = new DefaultFillFormatter();
 
     /**
      * if true, drawing circles is enabled
@@ -146,13 +147,18 @@ public class LineDataSet extends LineRadarDataSet<Entry> implements ILineDataSet
 
 
     /**
-     * sets the radius of the drawn circles.
-     * Default radius = 4f
+     * Sets the radius of the drawn circles.
+     * Default radius = 4f, Min = 1f
      *
      * @param radius
      */
     public void setCircleRadius(float radius) {
-        mCircleRadius = Utils.convertDpToPixel(radius);
+
+        if (radius >= 1f) {
+            mCircleRadius = Utils.convertDpToPixel(radius);
+        } else {
+            Log.e("LineDataSet", "Circle radius cannot be < 1");
+        }
     }
 
     @Override
@@ -161,13 +167,18 @@ public class LineDataSet extends LineRadarDataSet<Entry> implements ILineDataSet
     }
 
     /**
-     * sets the hole radius of the drawn circles.
-     * Default radius = 2f
+     * Sets the hole radius of the drawn circles.
+     * Default radius = 2f, Min = 0.5f
      *
      * @param holeRadius
      */
     public void setCircleHoleRadius(float holeRadius) {
-        mCircleHoleRadius = Utils.convertDpToPixel(holeRadius);
+
+        if (holeRadius >= 0.5f) {
+            mCircleHoleRadius = Utils.convertDpToPixel(holeRadius);
+        } else {
+            Log.e("LineDataSet", "Circle radius cannot be < 0.5");
+        }
     }
 
     @Override
@@ -377,12 +388,12 @@ public class LineDataSet extends LineRadarDataSet<Entry> implements ILineDataSet
     }
 
     /**
-     * Sets a custom FillFormatter to the chart that handles the position of the
+     * Sets a custom IFillFormatter to the chart that handles the position of the
      * filled-line for each DataSet. Set this to null to use the default logic.
      *
      * @param formatter
      */
-    public void setFillFormatter(FillFormatter formatter) {
+    public void setFillFormatter(IFillFormatter formatter) {
 
         if (formatter == null)
             mFillFormatter = new DefaultFillFormatter();
@@ -391,7 +402,7 @@ public class LineDataSet extends LineRadarDataSet<Entry> implements ILineDataSet
     }
 
     @Override
-    public FillFormatter getFillFormatter() {
+    public IFillFormatter getFillFormatter() {
         return mFillFormatter;
     }
 

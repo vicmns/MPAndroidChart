@@ -29,13 +29,13 @@ public class ScatterChartFrag extends SimpleFragment {
         View v = inflater.inflate(R.layout.frag_simple_scatter, container, false);
         
         mChart = (ScatterChart) v.findViewById(R.id.scatterChart1);
-        mChart.setDescription("");
+        mChart.getDescription().setEnabled(false);
         
         Typeface tf = Typeface.createFromAsset(getActivity().getAssets(),"OpenSans-Light.ttf");
         
         MyMarkerView mv = new MyMarkerView(getActivity(), R.layout.custom_marker_view);
-
-        mChart.setMarkerView(mv);
+        mv.setChartView(mChart); // For bounds control
+        mChart.setMarker(mv);
 
         mChart.setDrawGridBackground(false);
         mChart.setData(generateScatterData(6, 10000, 200));

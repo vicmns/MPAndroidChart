@@ -9,9 +9,10 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.realm.implementation.RealmBarDataSet;
 import com.github.mikephil.charting.data.realm.implementation.RealmLineDataSet;
-import com.github.mikephil.charting.formatter.AxisValueFormatter;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
@@ -84,7 +85,7 @@ public class RealmWikiExample extends RealmBaseActivity {
         final RealmResults<Score> results = mRealm.where(Score.class).findAll();
 
 
-        AxisValueFormatter formatter = new AxisValueFormatter() {
+        IAxisValueFormatter formatter = new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
                 return results.get((int) value).getPlayerName();
@@ -100,13 +101,13 @@ public class RealmWikiExample extends RealmBaseActivity {
         barChart.getXAxis().setValueFormatter(formatter);
 
         RealmLineDataSet<Score> lineDataSet = new RealmLineDataSet<Score>(results, "scoreNr", "totalScore");
-        lineDataSet.setDrawCubic(false);
+        lineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
         lineDataSet.setLabel("Result Scores");
         lineDataSet.setDrawCircleHole(false);
         lineDataSet.setColor(ColorTemplate.rgb("#FF5722"));
         lineDataSet.setCircleColor(ColorTemplate.rgb("#FF5722"));
         lineDataSet.setLineWidth(1.8f);
-        lineDataSet.setCircleSize(3.6f);
+        lineDataSet.setCircleRadius(3.6f);
 
         ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
         dataSets.add(lineDataSet);
