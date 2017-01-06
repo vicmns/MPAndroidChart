@@ -59,7 +59,12 @@ public class BubbleChartRenderer extends BarLineScatterCandleBubbleRenderer {
     protected float getShapeSize(float entrySize, float maxSize, float reference, boolean normalizeSize) {
         final float factor = normalizeSize ? ((maxSize == 0f) ? 1f : (float) Math.sqrt(entrySize / maxSize)) :
                 entrySize;
-        final float shapeSize = reference * factor;
+        final float shapeSize;
+        if(reference < 1) {
+            shapeSize = factor * 20;
+        } else {
+            shapeSize = reference * factor;
+        }
         return shapeSize;
     }
 
