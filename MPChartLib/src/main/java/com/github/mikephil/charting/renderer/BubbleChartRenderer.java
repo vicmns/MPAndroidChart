@@ -62,6 +62,8 @@ public class BubbleChartRenderer extends BarLineScatterCandleBubbleRenderer {
         final float shapeSize;
         if(reference < 1) {
             shapeSize = factor * 20;
+        } else if(reference > 100){
+            shapeSize = reference * 0.2f;
         } else {
             shapeSize = reference * factor;
         }
